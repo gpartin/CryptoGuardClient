@@ -232,6 +232,7 @@ TOOLS = [
         ),
         "inputSchema": {
             "type": "object",
+            "description": "No parameters required for health check.",
             "properties": {},
             "required": [],
         },
@@ -393,7 +394,7 @@ class MCPStdioServer:
             "name": "cryptoguard",
             "version": "0.3.0",
             "homepage": "https://github.com/gpartin/CryptoGuardClient",
-            "icon": "https://raw.githubusercontent.com/gpartin/CryptoGuardClient/main/icon.png",
+            "icon": "https://gpartin--cryptoguard-api-fastapi-app.modal.run/icon.png",
         }
 
     def handle_message(self, msg: dict) -> Optional[dict]:
@@ -413,7 +414,26 @@ class MCPStdioServer:
                         "resources": {"listChanged": False},
                         "prompts": {"listChanged": False},
                     },
-                    "serverInfo": self.server_info,
+                    "serverInfo": {
+                        **self.server_info,
+                        "configSchema": {
+                            "type": "object",
+                            "description": "CryptoGuard session configuration",
+                            "properties": {
+                                "timeout": {
+                                    "type": "integer",
+                                    "description": "Request timeout in seconds",
+                                    "default": 90,
+                                },
+                                "sensitivity": {
+                                    "type": "number",
+                                    "description": "Default anomaly detection sensitivity (0.1–5.0)",
+                                    "default": 1.0,
+                                },
+                            },
+                            "required": [],
+                        },
+                    },
                     "instructions": (
                         "CryptoGuard validates crypto trades before execution. "
                         "Use cryptoguard_search to find token IDs, then "
