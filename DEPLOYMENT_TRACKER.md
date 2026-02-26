@@ -59,51 +59,27 @@
 
 ## Pending Actions
 
-### 🔴 Priority 1: PyPI Trusted Publisher (CryptoGuardClient)
+### ✅ COMPLETED: PyPI (Both Products)
 
-**Blocker**: The GitHub Actions workflow ran but PyPI rejected the token — no trusted publisher configured.
+- **WaveGuardClient** v3.2.0 — LIVE on PyPI (2026-02-25)
+- **CryptoGuardClient** v0.3.0 — LIVE on PyPI (2026-02-26)
 
-**Steps to complete:**
-1. Go to https://pypi.org/manage/account/publishing/
-2. Click "Add a new pending publisher"
-3. Fill in:
-   - **PyPI project name**: `CryptoGuardClient`
-   - **Owner**: `gpartin`
-   - **Repository name**: `CryptoGuardClient`
-   - **Workflow name**: `publish.yml`
-   - **Environment name**: `pypi`
-4. Save
-5. Re-run the failed workflow:
-   ```bash
-   gh run rerun <RUN_ID> --repo gpartin/CryptoGuardClient
-   ```
-   Or delete the v0.3.0 release and recreate it.
+### ✅ COMPLETED: Smithery (Both Products)
 
-**Workflow claims (for debugging):**
-```
-sub: repo:gpartin/CryptoGuardClient:environment:pypi
-repository: gpartin/CryptoGuardClient
-repository_owner: gpartin
-repository_owner_id: 17169260
-workflow_ref: gpartin/CryptoGuardClient/.github/workflows/publish.yml@refs/tags/v0.3.0
-environment: pypi
-```
+- **WaveGuard** — 100/100 quality score (emergentphysicslab/waveguard)
+- **CryptoGuard** — 100/100 quality score (emergentphysicslab/cryptoguard)
 
-### 🟡 Priority 2: Smithery Submission (Both Products)
+### ✅ COMPLETED: Glama (Both Products)
 
-**WaveGuardClient**: Not yet submitted
-**CryptoGuardClient**: Not yet submitted
+- **WaveGuard** — Submitted 2026-02-26, pending review
+- **CryptoGuard** — Submitted 2026-02-26, pending review
 
-Both repos have `smithery.yaml` configured. Submit at https://smithery.ai by providing the GitHub repo URL.
+### 🟡 Pending: PR Merges (Waiting on Maintainers)
 
-### 🟡 Priority 3: Glama Submission (Both Products)
+- awesome-mcp-servers: PRs #2378 (WaveGuard) and #2440 (CryptoGuard) awaiting merge
+- x402 ecosystem: PRs #1341 (WaveGuard) and #1358 (CryptoGuard) awaiting merge
 
-**WaveGuardClient**: Not yet listed (note: awesome-mcp-servers PR #2378 reviewers may want Glama listing)
-**CryptoGuardClient**: Not yet submitted
-
-Both repos have `server.json` configured. Submit at https://glama.ai/mcp/servers → "Add Server".
-
-### 🟢 Priority 4: Community Posts (When Ready)
+### 🟢 Optional: Community Posts (When Ready)
 
 See individual `LAUNCH_SUBMISSIONS.md` in each repo for pre-written posts:
 - `C:\Papers\WaveGuardClient\LAUNCH_SUBMISSIONS.md` — Show HN, r/MachineLearning, r/IoT, r/MCP
@@ -156,7 +132,7 @@ All commits in public repos are GPG-signed.
 ```
 ┌──────────────────────┐     ┌──────────────────────┐
 │  WaveGuardClient     │     │  CryptoGuardClient   │
-│  (Public, PyPI)      │     │  (Public, PyPI*)      │
+│  (Public, PyPI)      │     │  (Public, PyPI)       │
 │  - Python SDK        │     │  - Python SDK        │
 │  - MCP Server        │     │  - MCP Server        │
 │  - 3 tools           │     │  - 5 tools           │
@@ -170,8 +146,6 @@ All commits in public repos are GPG-signed.
 │  - RTX 4060 / T4     │     │  - Uses WaveGuard    │
 │  - v3.2.0            │     │  - v0.3.0            │
 └──────────────────────┘     └──────────────────────┘
-
-* PyPI pending trusted publisher setup
 ```
 
 ---
