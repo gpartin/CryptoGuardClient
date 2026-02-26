@@ -33,8 +33,8 @@
 | PyPI | ✅ LIVE | v3.2.0 | 2026-02-25 | [WaveGuardClient](https://pypi.org/project/WaveGuardClient/) | `pip install WaveGuardClient` |
 | awesome-mcp-servers | ✅ MERGED | — | 2026-02-26 | [PR #2378](https://github.com/punkpeye/awesome-mcp-servers/pull/2378) | Analytics category |
 | x402 Ecosystem | ✅ SUBMITTED | — | 2026-02-26 | [PR #1341](https://github.com/anthropics/x402/pull/1341) | Signed commit `6a39fa9` |
-| Smithery | ⏳ PENDING | — | — | — | Requires web submission at smithery.ai |
-| Glama | ⏳ PENDING | — | — | — | Requires web submission at glama.ai; PR #2378 may depend on this |
+| Smithery | ✅ LIVE | v3.2.0 | 2026-02-26 | [emergentphysicslab/waveguard](https://smithery.ai/server/emergentphysicslab/waveguard) | 100/100 quality score |
+| Glama | ✅ SUBMITTED | — | 2026-02-26 | — | Pending review |
 
 ### CryptoGuard (Crypto Validator — Private)
 
@@ -49,11 +49,11 @@
 |---------|--------|---------|------|----------|-------|
 | GitHub | ✅ LIVE | v0.3.0 | 2026-02-26 | [gpartin/CryptoGuardClient](https://github.com/gpartin/CryptoGuardClient) | Public, 22 files, commit `f03248f` |
 | GitHub Release | ✅ CREATED | v0.3.0 | 2026-02-26 | [v0.3.0](https://github.com/gpartin/CryptoGuardClient/releases/tag/v0.3.0) | Triggers PyPI workflow |
-| PyPI | ⛔ BLOCKED | v0.3.0 | — | — | Trusted publisher not configured (see below) |
+| PyPI | ✅ LIVE | v0.3.0 | 2026-02-26 | [CryptoGuardClient](https://pypi.org/project/CryptoGuardClient/) | `pip install CryptoGuardClient` |
 | awesome-mcp-servers | ✅ SUBMITTED | — | 2026-02-26 | [PR #2440](https://github.com/punkpeye/awesome-mcp-servers/pull/2440) | Finance & Fintech category |
 | x402 Ecosystem | ✅ SUBMITTED | — | 2026-02-26 | [PR #1358](https://github.com/anthropics/x402/pull/1358) | Signed commit `b58bd0b`, replied to @Must-be-Ash |
-| Smithery | ⏳ PENDING | — | — | — | Requires web submission at smithery.ai |
-| Glama | ⏳ PENDING | — | — | — | Requires web submission at glama.ai |
+| Smithery | ✅ LIVE | v0.3.0 | 2026-02-26 | [emergentphysicslab/cryptoguard](https://smithery.ai/server/emergentphysicslab/cryptoguard) | 100/100 quality score |
+| Glama | ✅ SUBMITTED | — | 2026-02-26 | — | Pending review |
 
 ---
 
