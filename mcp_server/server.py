@@ -232,9 +232,14 @@ TOOLS = [
         ),
         "inputSchema": {
             "type": "object",
-            "description": "No parameters required for health check.",
-            "properties": {},
-            "required": [],
+            "properties": {
+                "verbose": {
+                    "type": "boolean",
+                    "description": "Return detailed health info including uptime and version details (default: false).",
+                    "default": False,
+                },
+            },
+            "additionalProperties": False,
         },
         "annotations": {
             "title": "Health Check",

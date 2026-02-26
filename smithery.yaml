@@ -1,21 +1,27 @@
-# Smithery configuration for CryptoGuard MCP Server
-# https://smithery.ai/docs/config
+# Smithery.ai configuration for CryptoGuard MCP Server
+# https://smithery.ai/docs/build/project-config
+#
+# CryptoGuard is a REMOTE MCP server — the engine runs on Modal,
+# this config tells Smithery how to build the thin MCP proxy.
 
-startCommand:
-  type: stdio
-  configSchema:
-    type: object
-    properties:
-      cryptoguardApiUrl:
-        type: string
-        description: "CryptoGuard API URL (default: https://gpartin--cryptoguard-api-fastapi-app.modal.run)"
-        default: "https://gpartin--cryptoguard-api-fastapi-app.modal.run"
-    required: []
-  commandFunction: |-
-    (config) => ({
-      command: "python",
-      args: ["mcp_server/server.py"],
-      env: {
-        CRYPTOGUARD_API_URL: config.cryptoguardApiUrl ?? "https://gpartin--cryptoguard-api-fastapi-app.modal.run"
-      }
-    })
+runtime: python
+
+# Build configuration
+build:
+  command: pip install requests
+
+# Start configuration
+start:
+  command: python mcp_server/server.py --http --port ${PORT:-3001}
+
+# Session configuration schema (optional settings users can provide)
+configSchema:
+  type: object
+  properties:
+    sensitivity:
+      type: number
+      description: "Anomaly detection sensitivity multiplier (0.1–5.0). Higher values flag more tokens. Optional — defaults to 1.0."
+    timeout:
+      type: integer
+      description: "Request timeout in seconds. Optional — defaults to 90."
+  required: []
