@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/registry/main/schema/server.json",
+  "name": "cryptoguard",
+  "display_name": "CryptoGuard Crypto Validator",
+  "description": "Per-transaction deterministic crypto validator. Validate trades (PROCEED/CAUTION/BLOCK), scan tokens, detect rug pulls — powered by WaveGuard physics engine. 5 free calls/day.",
+  "repository": {
+    "url": "https://github.com/gpartin/CryptoGuardClient",
+    "source": "github"
+  },
+  "version_detail": {
+    "version": "0.3.0",
+    "release_date": "2026-06-26"
+  },
+  "packages": [
+    {
+      "registry_name": "pypi",
+      "name": "CryptoGuardClient",
+      "version": "0.3.0"
+    }
+  ],
+  "remotes": [
+    {
+      "transport_type": "http",
+      "url": "https://gpartin--cryptoguard-api-fastapi-app.modal.run/mcp"
+    }
+  ],
+  "tools": [
+    {
+      "name": "cryptoguard_validate_trade",
+      "description": "Validate a crypto trade BEFORE execution. Returns PROCEED/CAUTION/BLOCK verdict with risk score, flags, and recommendation."
+    },
+    {
+      "name": "cryptoguard_scan_token",
+      "description": "Scan a token for anomalous market behavior via WaveGuard physics engine. Compares to tier-matched peers."
+    },
+    {
+      "name": "cryptoguard_rug_check",
+      "description": "Assess rug pull risk for a DEX trading pair. Scores 6 risk factors (0-100)."
+    },
+    {
+      "name": "cryptoguard_search",
+      "description": "Search for tokens by name, symbol, or contract address to find CoinGecko coin IDs."
+    },
+    {
+      "name": "cryptoguard_health",
+      "description": "Check CryptoGuard API health, version, and service status."
+    }
+  ],
+  "categories": ["crypto", "trading", "security", "risk-assessment"],
+  "tags": ["crypto", "trading", "rug-pull", "anomaly-detection", "waveguard", "mcp", "x402", "defi"]
+}

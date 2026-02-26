@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.emergentphysicslab/cryptoguard",
+  "title": "CryptoGuard",
+  "description": "Per-transaction deterministic crypto validator. Validate trades, scan tokens, detect rug pulls — powered by WaveGuard physics engine.",
+  "websiteUrl": "https://github.com/gpartin/CryptoGuardClient",
+  "iconUrl": "https://raw.githubusercontent.com/gpartin/CryptoGuardClient/main/cryptoguard_logo.svg",
+  "repository": {
+    "url": "https://github.com/gpartin/CryptoGuardClient",
+    "source": "github"
+  },
+  "version": "0.3.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://gpartin--cryptoguard-api-fastapi-app.modal.run/mcp"
+    }
+  ],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "api_url": {
+        "type": "string",
+        "description": "CryptoGuard API URL. Default uses the hosted Modal endpoint."
+      }
+    },
+    "required": []
+  }
+}

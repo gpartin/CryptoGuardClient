@@ -1,0 +1,21 @@
+# Smithery configuration for CryptoGuard MCP Server
+# https://smithery.ai/docs/config
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      cryptoguardApiUrl:
+        type: string
+        description: "CryptoGuard API URL (default: https://gpartin--cryptoguard-api-fastapi-app.modal.run)"
+        default: "https://gpartin--cryptoguard-api-fastapi-app.modal.run"
+    required: []
+  commandFunction: |-
+    (config) => ({
+      command: "python",
+      args: ["mcp_server/server.py"],
+      env: {
+        CRYPTOGUARD_API_URL: config.cryptoguardApiUrl ?? "https://gpartin--cryptoguard-api-fastapi-app.modal.run"
+      }
+    })

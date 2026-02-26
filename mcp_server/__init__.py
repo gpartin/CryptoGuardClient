@@ -1,0 +1,1 @@
+"""CryptoGuard MCP Server package."""
