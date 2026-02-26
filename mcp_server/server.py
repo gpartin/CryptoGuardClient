@@ -126,6 +126,13 @@ TOOLS = [
             },
             "required": ["token"],
         },
+        "annotations": {
+            "title": "Validate Trade",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "cryptoguard_scan_token",
@@ -153,6 +160,13 @@ TOOLS = [
             },
             "required": ["coin_id"],
         },
+        "annotations": {
+            "title": "Scan Token",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "cryptoguard_rug_check",
@@ -176,6 +190,13 @@ TOOLS = [
             },
             "required": ["chain", "pair_address"],
         },
+        "annotations": {
+            "title": "Rug Pull Check",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "cryptoguard_search",
@@ -195,6 +216,13 @@ TOOLS = [
             },
             "required": ["query"],
         },
+        "annotations": {
+            "title": "Search Tokens",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "cryptoguard_health",
@@ -205,6 +233,14 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {},
+            "required": [],
+        },
+        "annotations": {
+            "title": "Health Check",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
         },
     },
 ]
@@ -356,6 +392,8 @@ class MCPStdioServer:
         self.server_info = {
             "name": "cryptoguard",
             "version": "0.3.0",
+            "homepage": "https://github.com/gpartin/CryptoGuardClient",
+            "icon": "https://raw.githubusercontent.com/gpartin/CryptoGuardClient/main/icon.png",
         }
 
     def handle_message(self, msg: dict) -> Optional[dict]:
@@ -372,8 +410,17 @@ class MCPStdioServer:
                     "protocolVersion": "2024-11-05",
                     "capabilities": {
                         "tools": {"listChanged": False},
+                        "resources": {"listChanged": False},
+                        "prompts": {"listChanged": False},
                     },
                     "serverInfo": self.server_info,
+                    "instructions": (
+                        "CryptoGuard validates crypto trades before execution. "
+                        "Use cryptoguard_search to find token IDs, then "
+                        "cryptoguard_validate_trade or cryptoguard_scan_token "
+                        "to assess risk. cryptoguard_rug_check requires a "
+                        "chain and pair address."
+                    ),
                 },
             }
 
@@ -398,7 +445,42 @@ class MCPStdioServer:
             return {
                 "jsonrpc": "2.0",
                 "id": msg_id,
-                "result": {"prompts": []},
+                "result": {
+                    "prompts": [
+                        {
+                            "name": "validate-before-trade",
+                            "description": (
+                                "Validate a crypto token before executing a trade. "
+                                "Returns PROCEED, CAUTION, or BLOCK verdict."
+                            ),
+                            "arguments": [
+                                {
+                                    "name": "token",
+                                    "description": "Token name, symbol, or contract address",
+                                    "required": True,
+                                },
+                            ],
+                        },
+                        {
+                            "name": "check-rug-pull",
+                            "description": (
+                                "Check if a DEX trading pair shows rug pull risk signals."
+                            ),
+                            "arguments": [
+                                {
+                                    "name": "chain",
+                                    "description": "Blockchain (solana, ethereum, base, bsc)",
+                                    "required": True,
+                                },
+                                {
+                                    "name": "pair_address",
+                                    "description": "DEX pair contract address",
+                                    "required": True,
+                                },
+                            ],
+                        },
+                    ],
+                },
             }
 
         elif method == "tools/call":
