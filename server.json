@@ -19,9 +19,13 @@
   "configSchema": {
     "type": "object",
     "properties": {
-      "api_url": {
-        "type": "string",
-        "description": "CryptoGuard API URL. Default uses the hosted Modal endpoint."
+      "sensitivity": {
+        "type": "number",
+        "description": "Anomaly detection sensitivity multiplier (0.1–5.0). Higher values flag more tokens. Optional — defaults to 1.0."
+      },
+      "timeout": {
+        "type": "integer",
+        "description": "Request timeout in seconds. Optional — defaults to 90."
       }
     },
     "required": []
