@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "CryptoGuardClient"
-version = "0.3.0"
-description = "Python SDK for CryptoGuard — per-transaction deterministic crypto validator powered by WaveGuard physics engine"
+version = "0.4.0"
+description = "Python SDK for CryptoGuard — crypto risk scanner that detected every major crash in backtesting, 27 days early"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
