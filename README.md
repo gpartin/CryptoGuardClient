@@ -4,7 +4,7 @@
 
 Scan any token by name, ticker, or contract address. Get a deterministic verdict: **PROCEED / CAUTION / BLOCK**.
 
-**Version**: 0.4.0 &nbsp;|&nbsp; **Live API**: [`https://gpartin--cryptoguard-api-fastapi-app.modal.run`](https://gpartin--cryptoguard-api-fastapi-app.modal.run/health) &nbsp;|&nbsp; **Free tier**: 5 calls/day &nbsp;|&nbsp; **MCP**: 5 tools
+**Version**: 0.5.0 &nbsp;|&nbsp; **Live API**: [`https://gpartin--cryptoguard-api-fastapi-app.modal.run`](https://gpartin--cryptoguard-api-fastapi-app.modal.run/health) &nbsp;|&nbsp; **Free tier**: 5 calls/day &nbsp;|&nbsp; **MCP**: 5 tools
 
 ---
 
@@ -67,7 +67,7 @@ curl -X POST https://gpartin--cryptoguard-api-fastapi-app.modal.run/v1/validate-
   -d '{"token": "solana", "action": "buy", "amount_usd": 500}'
 ```
 
-First 5 calls/day are free. After that, $0.05/call via [x402](https://github.com/coinbase/x402) USDC micropayments.
+First 5 calls/day are free. After that: **$49/mo subscription** (Stripe), **$0.05/call** via [x402](https://github.com/coinbase/x402) USDC, or via [RapidAPI](https://rapidapi.com/).
 
 ## MCP Integration (Claude Desktop / AI Agents)
 
@@ -137,6 +137,7 @@ CryptoGuard is an MCP server with 5 tools. Works with Claude Desktop, Cursor, or
 | GET | `/v1/free-tier` | Free | Check remaining free calls |
 | GET | `/v1/search?q=...` | Free | Search tokens by name |
 | GET | `/v1/pricing` | Free | Pricing details |
+| POST | `/v1/subscribe` | Free | Start Stripe subscription checkout |
 | GET | `/health` | Free | Health check |
 
 ## How It Works
@@ -160,24 +161,26 @@ No model training, no drift, no retraining. Deterministic for the same input.
 
 </details>
 
-## Key Features (v0.4.0)
+## Key Features (v0.5.0)
 
 - **Backtested**: 100% recall on 7 historical crashes with 27-day average lead time
 - **Free tier**: 5 calls/day per IP, no signup required
+- **3 payment options**: Stripe subscription ($49/mo), x402 USDC per-scan ($0.05), or RapidAPI
 - **Deterministic**: Same input always produces same verdict
 - **MCP server**: 5 tools for AI agent integration (stdio + HTTP)
 - **Python SDK**: `pip install CryptoGuardClient` with typed exceptions
 - **Contract resolution**: Accepts name, ticker, or contract address across 7 chains
 - **Batch validation**: Up to 20 trades or 50 tokens per call
 - **Rug pull detection**: DexScreener-powered liquidity and holder analysis
-- **x402 payments**: USDC micropayments after free tier
 
 ## Pricing
 
-| Tier | Cost | Limit |
-|------|------|-------|
-| **Free** | $0 | 5 calls/day per IP |
-| **Paid** | $0.05/call | Unlimited ([x402](https://github.com/coinbase/x402) USDC) |
+| Tier | Cost | Limit | Auth |
+|------|------|-------|------|
+| **Free** | $0 | 5 calls/day per IP | None |
+| **Subscription** | $49/month | Unlimited | API key (`X-API-Key` header) via [Stripe](https://stripe.com) |
+| **Per-scan** | $0.05/call | Unlimited | [x402](https://github.com/coinbase/x402) USDC micropayment |
+| **RapidAPI** | Marketplace pricing | Unlimited | [RapidAPI](https://rapidapi.com/) proxy key |
 
 ## Architecture
 
@@ -187,8 +190,8 @@ AI Agent / User
     v
 CryptoGuard API (Modal, stateless)
     |-- MCP endpoint (5 tools, JSON-RPC 2.0)
-    |-- Free tier (5 calls/day per IP)
-    |-- x402 payments (USDC, after free tier)
+    |-- Auth: API key (Stripe) → x402 (USDC) → RapidAPI → Free tier
+    |-- Stripe billing (POST /v1/subscribe → checkout → API key)
     |-- Token resolution (name/ticker/address → CoinGecko ID, 7 chains)
     |-- Market data (CoinGecko + DexScreener, cached)
     +-- WaveGuard anomaly engine (GPU-accelerated)
