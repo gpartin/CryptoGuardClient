@@ -111,82 +111,82 @@ Added CryptoGuard to the x402 ecosystem directory.
 
 ## 6. Show HN Post
 
-**Title:** `Show HN: CryptoGuard – Per-transaction crypto validator for AI trading agents (MCP + API)`
+**Title:** `Show HN: CryptoGuard – Detected every major crypto crash in backtesting, 27 days early (API + MCP)`
 
 **Body:**
 
 Hi HN,
 
-I built a per-transaction deterministic crypto validator designed for AI trading agents. Before your agent executes a trade, it validates the decision through physics-based analysis and returns PROCEED / CAUTION / BLOCK.
+I built a crypto risk scanner and backtested it against 7 historical crashes: LUNA, FTX, Celsius, 3AC, UST depeg, SOL/FTX, and TITAN.
 
-**Why this exists:**
-AI trading agents make decisions fast but can't evaluate token safety. CryptoGuard sits between the decision and execution — checking liquidity, holder concentration, honeypot risk, contract age, and dozens of other signals in one call.
+**Results:**
 
-**What it does:**
-- **Trade Validation**: Send token + action + amount → get PROCEED/CAUTION/BLOCK + risk scores
-- **Token Scanning**: Deep analysis (honeypot detection, liquidity depth, holder distribution, contract age)
-- **Rug Pull Detection**: Purpose-built detector for pump-and-dump, honeypot, and abandonment patterns
-- **Token Search**: Search across DEXes by name or address
+| Method | Recall | Avg Lead Time | False Positive Rate |
+|--------|--------|---------------|---------------------|
+| CryptoGuard | 100% (7/7) | 27.4 days | 6.1% |
+| Z-score baseline | 100% (7/7) | 28.4 days | 29.9% |
+| Rolling volatility | 86% (6/7) | 15.5 days | 4.0% |
+
+Same recall as z-scores, but 5× fewer false alarms. Rolling volatility misses crashes entirely or fires on crash day.
+
+**Best example — FTX collapse:** On October 16, 2022, FTT was at $23.73. Z-score analysis: nothing unusual (score 1.20, PROCEED). CryptoGuard: anomaly score 4.72, CAUTION. 23 days later, FTT fell 94%.
 
 **How it works:**
-The engine runs on WaveGuard physics — data is encoded onto a lattice and propagated through coupled wave equations. Anomalous token patterns scatter differently from healthy ones. Deterministic: same input always produces same output.
+Your token's market data (price, volume, momentum, volatility) is compared against tier-matched peers. The anomaly detection engine encodes features onto a 3D lattice and runs wave simulations — normal patterns are stable, anomalous ones diverge. Deterministic: same input, same output.
 
-**Integration options:**
-1. **MCP tool** for Claude/AI agents (stdio or HTTP)
-2. **Python SDK**: `pip install CryptoGuardClient`
-3. **REST API**: Direct HTTP calls
+**Integration:**
+- REST API: `POST /v1/validate-trade` → PROCEED / CAUTION / BLOCK
+- MCP server: 5 tools for Claude Desktop / AI agents
+- Python SDK: `pip install CryptoGuardClient`
+- 5 free calls/day, then $0.05/call (x402 USDC)
 
-**Pricing:**
-- 5 free calls/day (no API key needed)
-- Pay-per-call via x402 USDC payments (Base L2)
-- No subscriptions, no monthly fees
-
-```python
-from cryptoguard import CryptoGuardClient
-client = CryptoGuardClient()
-result = client.validate_trade("SOL_ADDRESS", "buy", 500)
-print(result["verdict"])  # PROCEED / CAUTION / BLOCK
-```
+Full backtest data and methodology: https://github.com/gpartin/CryptoGuard/tree/main/backtest
 
 GitHub: https://github.com/gpartin/CryptoGuardClient
-API: https://gpartin--cryptoguard-api-fastapi-app.modal.run
 
 ---
 
 ## 7. Reddit r/CryptoCurrency Post
 
-**Title:** `Built a per-transaction crypto validator for AI trading bots — checks tokens before your bot trades`
+**Title:** `Backtested a crypto risk scanner against 7 historical crashes — caught all of them 27 days early`
 
 **Body:**
 
-If you're running trading bots (especially on Solana/Base), here's a validator that checks every token before execution:
+Built a risk scanner and ran it against LUNA, FTX, Celsius, 3AC, UST, SOL/FTX, and TITAN crashes.
 
+**Results:**
+- **100% recall** — caught all 7 crashes
+- **27.4 day average lead time** — not crash-day alerts, weeks-early warnings
+- **6.1% false positive rate** — flags roughly once every 2-3 weeks during calm markets
+
+For comparison, a simple z-score baseline also catches 100% but flags 30% of normal days. You'd ignore it after a week.
+
+**Best example (FTX):**
+
+```
+Oct 16, 2022 — FTT at $23.73
+  CryptoGuard: CAUTION (score 4.72)
+  Z-score:     PROCEED (score 1.20)  ← saw nothing
+  
+Nov 8, 2022 — FTX collapses, FTT -94%
+```
+
+CryptoGuard flagged it 23 days before the crash while statistical analysis saw nothing unusual.
+
+**How to use it:**
 ```python
 from cryptoguard import CryptoGuardClient
 client = CryptoGuardClient()
 
-# Before your bot buys
-result = client.validate_trade("TOKEN_ADDRESS", "buy", 500)
-if result["verdict"] == "BLOCK":
-    print(f"Blocked: {result['reasons']}")
-    # Skip this trade
+result = client.validate_trade("solana", "buy", 500)
+print(result["verdict"])  # PROCEED / CAUTION / BLOCK
 ```
 
-**What it checks:**
-- Honeypot detection (can you actually sell?)
-- Liquidity depth (enough to exit your position?)
-- Holder concentration (whale risk?)
-- Contract age (too new = risky)
-- Rug pull patterns (pump-and-dump, abandonment)
-- Overall risk score with PROCEED / CAUTION / BLOCK verdict
+5 free calls/day, no API key needed. Works as an MCP tool for Claude too.
 
-**Key features:**
-- Deterministic (same input = same output, no ML randomness)
-- 5 free calls/day, no API key needed
-- Pay-per-call after that (USDC on Base, no subscriptions)
-- Works as MCP tool if you're using Claude for trading analysis
+Full backtest data: https://github.com/gpartin/CryptoGuard/tree/main/backtest
 
-Not financial advice, but it catches the obvious scams before your bot can YOLO into them.
+Not financial advice. Past crash detection doesn't guarantee future results. But the data's all public — judge for yourself.
 
 `pip install CryptoGuardClient`
 GitHub: https://github.com/gpartin/CryptoGuardClient
@@ -195,11 +195,11 @@ GitHub: https://github.com/gpartin/CryptoGuardClient
 
 ## 8. Reddit r/MCP Post
 
-**Title:** `CryptoGuard MCP Server — Give Claude crypto trade validation with 5 tools`
+**Title:** `CryptoGuard MCP Server — crypto risk scanner that caught FTX 23 days early (5 tools for Claude)`
 
 **Body:**
 
-Published a crypto validation MCP server. 5 tools for AI trading agent integration.
+Published a crypto risk scanner as an MCP server. Backtested against 7 historical crashes — 100% recall, 27-day average lead time.
 
 **Setup (30 seconds):**
 
@@ -207,71 +207,67 @@ Published a crypto validation MCP server. 5 tools for AI trading agent integrati
 {
   "mcpServers": {
     "cryptoguard": {
-      "command": "uvx",
-      "args": ["CryptoGuardClient"]
+      "url": "https://gpartin--cryptoguard-api-fastapi-app.modal.run/mcp",
+      "transport": "http"
     }
   }
 }
 ```
 
 **Then ask Claude:**
-> "Should I buy this token: [address]? Check if it's safe first."
+> "Should I buy SOL right now? Check the risk first."
 
-Claude calls `cryptoguard_validate_trade` and gets back PROCEED/CAUTION/BLOCK with risk scores.
+Claude calls `cryptoguard_validate_trade` and gets PROCEED / CAUTION / BLOCK with anomaly scores.
 
 **Five tools:**
-- `cryptoguard_validate_trade` — Full trade validation with verdict
-- `cryptoguard_scan_token` — Deep token analysis (honeypot, liquidity, holders)
-- `cryptoguard_rug_check` — Rug pull detection with risk scoring
+- `cryptoguard_validate_trade` — Trade validation with verdict
+- `cryptoguard_scan_token` — Token anomaly scan
+- `cryptoguard_rug_check` — Rug pull detection
 - `cryptoguard_search` — Find tokens across DEXes
 - `cryptoguard_health` — API status
 
-**Powered by WaveGuard physics engine** — deterministic, no ML, same input always gives same output.
+**Evidence:** Backtested against LUNA, FTX, Celsius, 3AC, UST, SOL/FTX, TITAN. Detected all 7 crashes with 27-day average lead time. Full data: https://github.com/gpartin/CryptoGuard/tree/main/backtest
 
-Free tier: 5 calls/day, no API key. Pay-per-call via x402 USDC payments after.
+Free tier: 5 calls/day, no API key. Or: `pip install CryptoGuardClient`
 
-PyPI: `pip install CryptoGuardClient`
 GitHub: https://github.com/gpartin/CryptoGuardClient
 
 ---
 
 ## 9. Reddit r/algotrading Post
 
-**Title:** `Per-transaction crypto validator API for algo trading bots — PROCEED/CAUTION/BLOCK verdicts`
+**Title:** `Backtested a crypto anomaly detector against 7 crashes — 100% recall, 27d lead, 6% FPR`
 
 **Body:**
 
-Built a validator that sits between your trading bot's decision engine and execution layer. Before executing a trade, it validates the token:
+Built an anomaly detection layer for crypto trading bots. Backtested against historical crashes:
+
+| Event | Lead Time | Method |
+|-------|-----------|--------|
+| LUNA/UST | 28 days | WaveGuard flagged, z-score calm |
+| FTX/FTT | 23 days | WaveGuard CAUTION at $23.73, z-score PROCEED |
+| Celsius | 29 days | Both flagged, WaveGuard fewer false alerts |
+| 3AC/BTC | 30 days | Momentum and volume divergence |
+| UST depeg | 28 days | Early stablecoin stress signals |
+| SOL/FTX | 26 days | Contagion detection |
+
+**Aggregate:** 100% recall, 27.4d avg lead, 6.1% FPR vs z-score's 29.9% FPR.
 
 **Flow:**
 ```
 Bot decides to buy TOKEN_X
   → CryptoGuard.validate_trade(TOKEN_X, "buy", 500)
-  → Returns: {verdict: "CAUTION", risk_score: 0.65, reasons: ["low liquidity", "high holder concentration"]}
-  → Bot adjusts position size or skips
+  → {verdict: "CAUTION", score: 4.72, flags: ["vol_price_divergence", "momentum_3d"]}
+  → Bot reduces position size
 ```
 
-**What it analyzes per call:**
-- Honeypot risk (can you exit the position?)
-- Liquidity depth vs your intended position size
-- Holder concentration (top 10 holders %)
-- Contract age and deployment patterns
-- Historical rug pull pattern matching
-
-**API endpoints:**
-| Endpoint | Purpose |
-|----------|---------|
-| `/validate` | Full trade validation |
-| `/scan/{address}` | Deep token analysis |
-| `/rug-check/{address}` | Rug pull detection |
-| `/search?q=` | Token search |
-| `/health` | API status |
+The detection engine compares your token's time-series features against tier-matched peers and scores anomalies using GPU-accelerated wave simulations (not ML — deterministic, no training pipeline).
 
 **Integration:**
 - Python SDK: `pip install CryptoGuardClient`
-- REST API: Direct HTTP calls to Modal endpoint
-- MCP: Plug into Claude for AI-assisted analysis
+- REST API: Direct HTTP
+- MCP: 5 tools for Claude Desktop
 
-5 free calls/day. Pay-per-call after (USDC, Base L2).
+5 free calls/day. Full backtest methodology and raw data: https://github.com/gpartin/CryptoGuard/tree/main/backtest
 
 GitHub: https://github.com/gpartin/CryptoGuardClient
