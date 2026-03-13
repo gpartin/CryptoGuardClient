@@ -8,6 +8,10 @@ Scan any token by name, ticker, or contract address. Get a deterministic verdict
 
 ---
 
+<a href="https://glama.ai/mcp/servers/gpartin/CryptoGuardClient">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/gpartin/CryptoGuardClient/badge" alt="CryptoGuard MCP server" />
+</a>
+
 ## Backtest Results
 
 Tested against 7 historical crypto crashes (LUNA, FTX, Celsius, 3AC, UST, SOL/FTX, TITAN) and 4 calm-market control periods. Full methodology and data: [CryptoGuard backtest](https://github.com/gpartin/CryptoGuard/tree/main/backtest).
