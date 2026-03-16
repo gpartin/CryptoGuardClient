@@ -2,7 +2,7 @@
 CryptoGuard MCP Server — Model Context Protocol for Claude Desktop & AI Agents.
 
 Per-transaction deterministic crypto validator powered by WaveGuard physics engine.
-5 tools: validate_trade, scan_token, rug_check, search, health.
+7 tools: validate_trade, scan_token, validate_trade_plus, counterfactual_trade, rug_check, search, health.
 
 Transports
 ----------
@@ -169,6 +169,103 @@ TOOLS = [
         },
     },
     {
+        "name": "cryptoguard_validate_trade_plus",
+        "description": (
+            "Premium stateless decision bundle for one-shot trade gating. "
+            "Caller provides full context (training/test + optional what-if blocks) "
+            "and receives verdict, risk score, instability/mechanism signals, and recommendation."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "training": {
+                    "type": "array",
+                    "description": "Reference normal samples.",
+                    "minItems": 2,
+                },
+                "test": {
+                    "description": "Trade candidate sample to evaluate.",
+                },
+                "counterfactual_tests": {
+                    "type": "array",
+                    "description": "Optional what-if variants for sensitivity analysis.",
+                },
+                "intervention_tests": {
+                    "type": "array",
+                    "description": "Optional intervention variants for mechanism probing.",
+                },
+                "intervention_labels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional labels for intervention tests.",
+                },
+                "sequence": {
+                    "type": "array",
+                    "description": "Optional ordered sequence for trajectory/regime checks.",
+                },
+                "sensitivity": {
+                    "type": "number",
+                    "description": "Anomaly sensitivity (default: 1.0).",
+                },
+                "field_level": {
+                    "type": "integer",
+                    "enum": [0, 1],
+                    "description": "0=real field, 1=complex field (default: 1).",
+                },
+            },
+            "required": ["training", "test"],
+        },
+        "annotations": {
+            "title": "Validate Trade Plus",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
+    },
+    {
+        "name": "cryptoguard_counterfactual_trade",
+        "description": (
+            "Stateless what-if sensitivity analysis. Submit baseline + counterfactual "
+            "variants in one request and receive tipping-point guidance."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "training": {
+                    "type": "array",
+                    "description": "Reference normal samples.",
+                    "minItems": 2,
+                },
+                "base_test": {
+                    "description": "Baseline sample under evaluation.",
+                },
+                "counterfactual_tests": {
+                    "type": "array",
+                    "description": "What-if variants of the baseline sample.",
+                    "minItems": 1,
+                },
+                "sensitivity": {
+                    "type": "number",
+                    "description": "Anomaly sensitivity (default: 1.0).",
+                },
+                "field_level": {
+                    "type": "integer",
+                    "enum": [0, 1],
+                    "description": "0=real field, 1=complex field (default: 1).",
+                },
+            },
+            "required": ["training", "base_test", "counterfactual_tests"],
+        },
+        "annotations": {
+            "title": "Counterfactual Trade",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
+    },
+    {
         "name": "cryptoguard_rug_check",
         "description": (
             "Assess rug pull risk for a specific DEX trading pair. Scores "
@@ -318,6 +415,59 @@ def execute_tool(name: str, arguments: dict) -> dict:
                 ]
             }
 
+        elif name == "cryptoguard_validate_trade_plus":
+            body = {
+                "training": arguments["training"],
+                "test": arguments["test"],
+                "counterfactual_tests": arguments.get("counterfactual_tests", []),
+                "intervention_tests": arguments.get("intervention_tests", []),
+                "intervention_labels": arguments.get("intervention_labels", []),
+                "sequence": arguments.get("sequence", []),
+                "sensitivity": arguments.get("sensitivity", 1.0),
+                "field_level": arguments.get("field_level", 1),
+            }
+            result = _api_post("/v1/intel/validate-trade-plus", body)
+            verdict = result.get("verdict", "UNKNOWN")
+            risk = result.get("risk_level", "UNKNOWN")
+            score = result.get("risk_score", 0)
+            recommendation = result.get("recommendation", "")
+            signals = result.get("signals", [])
+            lines = [
+                f"Verdict: {verdict} | Risk: {risk} (score: {score})",
+                f"Recommendation: {recommendation}",
+            ]
+            if signals:
+                lines.append("Signals: " + "; ".join(signals[:5]))
+            return {
+                "content": [
+                    {"type": "text", "text": "\n".join(lines)},
+                    {"type": "text", "text": json.dumps(result, indent=2, default=str)},
+                ]
+            }
+
+        elif name == "cryptoguard_counterfactual_trade":
+            body = {
+                "training": arguments["training"],
+                "base_test": arguments["base_test"],
+                "counterfactual_tests": arguments["counterfactual_tests"],
+                "sensitivity": arguments.get("sensitivity", 1.0),
+                "field_level": arguments.get("field_level", 1),
+            }
+            result = _api_post("/v1/intel/counterfactual-trade", body)
+            verdict = result.get("verdict", "UNKNOWN")
+            risk = result.get("risk_level", "UNKNOWN")
+            tip = result.get("tipping_point_index")
+            summary = (
+                f"Verdict: {verdict} | Risk: {risk} | "
+                f"Tipping point: {tip if tip is not None else 'none found'}"
+            )
+            return {
+                "content": [
+                    {"type": "text", "text": summary},
+                    {"type": "text", "text": json.dumps(result, indent=2, default=str)},
+                ]
+            }
+
         elif name == "cryptoguard_rug_check":
             chain = arguments["chain"]
             pair = arguments["pair_address"]
@@ -397,7 +547,7 @@ class MCPStdioServer:
     def __init__(self) -> None:
         self.server_info = {
             "name": "cryptoguard",
-            "version": "0.3.0",
+            "version": "0.6.0",
             "homepage": "https://github.com/gpartin/CryptoGuardClient",
             "icon": "https://gpartin--cryptoguard-api-fastapi-app.modal.run/icon.png",
         }
@@ -540,7 +690,7 @@ class MCPStdioServer:
     def run_stdio(self) -> None:
         """Run the MCP server on stdin/stdout."""
         sys.stderr.write(
-            f"CryptoGuard MCP server v0.3.0 started (API: {API_URL})\n"
+            f"CryptoGuard MCP server v0.6.0 started (API: {API_URL})\n"
         )
         sys.stderr.flush()
 
@@ -575,7 +725,7 @@ def run_http_server(port: int = 3001) -> None:
         print("HTTP transport requires: pip install 'CryptoGuardClient[mcp]'")
         sys.exit(1)
 
-    mcp_app = FA(title="CryptoGuard MCP Server", version="0.3.0")
+    mcp_app = FA(title="CryptoGuard MCP Server", version="0.6.0")
     server = MCPStdioServer()
 
     @mcp_app.post("/mcp")
@@ -586,7 +736,7 @@ def run_http_server(port: int = 3001) -> None:
     async def mcp_tools() -> dict:  # type: ignore[type-arg]
         return {"tools": TOOLS}
 
-    print(f"CryptoGuard MCP HTTP server v0.3.0 on port {port}")
+    print(f"CryptoGuard MCP HTTP server v0.6.0 on port {port}")
     uvicorn.run(mcp_app, host="0.0.0.0", port=port)
 
 
@@ -598,7 +748,7 @@ def run_http_server(port: int = 3001) -> None:
 def main():
     """Entry point for ``cryptoguard-mcp`` console script."""
     parser = argparse.ArgumentParser(
-        description="CryptoGuard MCP Server v0.3.0"
+        description="CryptoGuard MCP Server v0.6.0"
     )
     parser.add_argument(
         "--http",

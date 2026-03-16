@@ -8,14 +8,14 @@
     "source": "github"
   },
   "version_detail": {
-    "version": "0.3.0",
-    "release_date": "2026-06-26"
+    "version": "0.6.0",
+    "release_date": "2026-03-16"
   },
   "packages": [
     {
       "registry_name": "pypi",
       "name": "CryptoGuardClient",
-      "version": "0.3.0"
+      "version": "0.6.0"
     }
   ],
   "remotes": [
@@ -32,6 +32,14 @@
     {
       "name": "cryptoguard_scan_token",
       "description": "Scan a token for anomalous market behavior via WaveGuard physics engine. Compares to tier-matched peers."
+    },
+    {
+      "name": "cryptoguard_validate_trade_plus",
+      "description": "Premium stateless decision bundle for one-shot trade gating. Provides verdict, risk score, instability/mechanism signals."
+    },
+    {
+      "name": "cryptoguard_counterfactual_trade",
+      "description": "Stateless what-if sensitivity analysis. Submit baseline + counterfactual variants for tipping-point guidance."
     },
     {
       "name": "cryptoguard_rug_check",

@@ -4,7 +4,7 @@
 
 Scan any token by name, ticker, or contract address. Get a deterministic verdict: **PROCEED / CAUTION / BLOCK**.
 
-**Version**: 0.5.0 &nbsp;|&nbsp; **Live API**: [`https://gpartin--cryptoguard-api-fastapi-app.modal.run`](https://gpartin--cryptoguard-api-fastapi-app.modal.run/health) &nbsp;|&nbsp; **Free tier**: 5 calls/day &nbsp;|&nbsp; **MCP**: 5 tools
+**Version**: 0.6.0 &nbsp;|&nbsp; **Live API**: [`https://gpartin--cryptoguard-api-fastapi-app.modal.run`](https://gpartin--cryptoguard-api-fastapi-app.modal.run/health) &nbsp;|&nbsp; **Free tier**: 5 calls/day &nbsp;|&nbsp; **MCP**: 7 tools
 
 ---
 
@@ -71,7 +71,7 @@ First 5 calls/day are free. After that: **$0.05/call** via [x402](https://github
 
 ## MCP Integration (Claude Desktop / AI Agents)
 
-CryptoGuard is an MCP server with 5 tools. Works with Claude Desktop, Cursor, or any MCP client.
+CryptoGuard is an MCP server with 7 tools. Works with Claude Desktop, Cursor, or any MCP client.
 
 ### Option 1: Remote HTTP (no install)
 
@@ -118,6 +118,8 @@ CryptoGuard is an MCP server with 5 tools. Works with Claude Desktop, Cursor, or
 |------|-------------|
 | `cryptoguard_validate_trade` | Validate a trade → PROCEED / CAUTION / BLOCK |
 | `cryptoguard_scan_token` | Anomaly scan for any token |
+| `cryptoguard_validate_trade_plus` | Premium stateless decision bundle with what-if analysis |
+| `cryptoguard_counterfactual_trade` | What-if sensitivity analysis with tipping-point guidance |
 | `cryptoguard_rug_check` | DEX pair rug pull risk assessment |
 | `cryptoguard_search` | Search tokens by name/symbol/address |
 | `cryptoguard_health` | Service health check |
@@ -133,12 +135,28 @@ CryptoGuard is an MCP server with 5 tools. Works with Claude Desktop, Cursor, or
 | GET | `/v1/scan/{coin_id}/history` | 5 free/day, then $0.05 | Historical self-comparison |
 | GET | `/v1/rug-check/{chain}/{pair_address}` | 5 free/day, then $0.05 | Rug pull risk assessment |
 | GET | `/v1/dex/new-pairs` | 5 free/day, then $0.05 | New DEX pair discovery |
-| POST | `/mcp` | Free | MCP endpoint (JSON-RPC 2.0) |
-| GET | `/v1/free-tier` | Free | Check remaining free calls |
+| GET | `/v1/dex/search` | 5 free/day, then $0.05 | DexScreener pair search |
+| GET | `/v1/dex/pair/{chain}/{pair_address}` | 5 free/day, then $0.05 | DEX pair details |
+| GET | `/v1/dex/token/{token_address}` | 5 free/day, then $0.05 | DEX token info |
+| POST | `/v1/intel/validate-trade-plus` | $0.10/call | Premium stateless decision bundle |
+| POST | `/v1/intel/counterfactual-trade` | $0.08/call | What-if sensitivity analysis |
+| GET | `/v1/track-record` | Free | Historical prediction track record |
+| POST | `/v1/trend-detect` | 5 free/day, then $0.05 | Physics-based trend detection |
+| POST | `/v1/regime-detect` | 5 free/day, then $0.05 | Regime change detection |
+| POST | `/v1/correlation-scan` | 5 free/day, then $0.05 | Anomalous correlation detection |
+| POST | `/v1/volatility-forecast` | 5 free/day, then $0.05 | Physics-based volatility forecast |
+| POST | `/v1/spectral-scan` | 5 free/day, then $0.05 | Hidden periodicity detection |
+| POST | `/v1/whale-detector` | 5 free/day, then $0.05 | Whale activity detection |
+| POST | `/v1/momentum-pulse` | 5 free/day, then $0.05 | Momentum pulse detection |
 | GET | `/v1/search?q=...` | Free | Search tokens by name |
+| GET | `/v1/free-tier` | Free | Check remaining free calls |
 | GET | `/v1/pricing` | Free | Pricing details |
-
+| GET | `/v1/stats` | Free | Service statistics |
 | GET | `/health` | Free | Health check |
+| POST | `/mcp` | Free | MCP endpoint (JSON-RPC 2.0) |
+| GET | `/mcp/tools` | Free | List MCP tools |
+| GET | `/v1/agent/tools` | Free | Agent tool catalog |
+| GET | `/v1/agent/mcp` | Free | MCP server metadata |
 
 ## How It Works
 
@@ -161,17 +179,20 @@ No model training, no drift, no retraining. Deterministic for the same input.
 
 </details>
 
-## Key Features (v0.5.0)
+## Key Features (v0.6.0)
 
 - **Backtested**: 100% recall on 7 historical crashes with 27-day average lead time
 - **Free tier**: 5 calls/day per IP, no signup required
 - **2 payment options**: x402 USDC per-scan ($0.05) or RapidAPI plans
 - **Deterministic**: Same input always produces same verdict
-- **MCP server**: 5 tools for AI agent integration (stdio + HTTP)
+- **MCP server**: 7 tools for AI agent integration (stdio + HTTP)
 - **Python SDK**: `pip install CryptoGuardClient` with typed exceptions
+- **Physics Intelligence**: 7 endpoints for trend/regime/volatility/spectral/whale/momentum analysis
+- **Intel endpoints**: Premium validate-trade-plus ($0.10) and counterfactual-trade ($0.08)
 - **Contract resolution**: Accepts name, ticker, or contract address across 7 chains
 - **Batch validation**: Up to 20 trades or 50 tokens per call
 - **Rug pull detection**: DexScreener-powered liquidity and holder analysis
+- **30 REST endpoints**: Complete crypto risk intelligence API
 
 ## Pricing
 
@@ -190,10 +211,12 @@ AI Agent / User
     |
     v
 CryptoGuard API (Modal, stateless)
-    |-- MCP endpoint (5 tools, JSON-RPC 2.0)
+    |-- MCP endpoint (7 tools, JSON-RPC 2.0)
     |-- Auth: RapidAPI → API key → x402 (USDC) → Free tier
     |-- Token resolution (name/ticker/address → CoinGecko ID, 7 chains)
     |-- Market data (CoinGecko + DexScreener, cached)
+    |-- Physics Intelligence (trend, regime, correlation, volatility, spectral, whale, momentum)
+    |-- Intel (validate-trade-plus, counterfactual-trade)
     +-- WaveGuard anomaly engine (GPU-accelerated)
 ```
 

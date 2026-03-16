@@ -43,7 +43,7 @@ from .exceptions import (
     ServerError,
 )
 
-__version__ = "0.3.0"
+__version__ = "0.6.0"
 
 _STATUS_MAP = {
     401: AuthenticationError,
@@ -237,6 +237,167 @@ class CryptoGuardClient:
         if chain:
             params["chain"] = chain
         return self._get("/v1/dex/new-pairs", params)
+
+    # ── Intel endpoints (premium) ────────────────────────────────────
+
+    def validate_trade_plus(
+        self,
+        training: list,
+        test: Any,
+        counterfactual_tests: list | None = None,
+        intervention_tests: list | None = None,
+        intervention_labels: list[str] | None = None,
+        sequence: list | None = None,
+        sensitivity: float = 1.0,
+        field_level: int = 1,
+    ) -> dict:
+        """Premium stateless decision bundle for one-shot trade gating.
+
+        Args:
+            training: Reference normal samples (min 2).
+            test: Trade candidate sample to evaluate.
+            counterfactual_tests: Optional what-if variants.
+            intervention_tests: Optional intervention variants.
+            intervention_labels: Optional labels for interventions.
+            sequence: Optional ordered sequence for trajectory checks.
+            sensitivity: Anomaly sensitivity multiplier.
+            field_level: 0=real, 1=complex field.
+        """
+        body: dict = {
+            "training": training,
+            "test": test,
+            "sensitivity": sensitivity,
+            "field_level": field_level,
+        }
+        if counterfactual_tests:
+            body["counterfactual_tests"] = counterfactual_tests
+        if intervention_tests:
+            body["intervention_tests"] = intervention_tests
+        if intervention_labels:
+            body["intervention_labels"] = intervention_labels
+        if sequence:
+            body["sequence"] = sequence
+        return self._post("/v1/intel/validate-trade-plus", body)
+
+    def counterfactual_trade(
+        self,
+        training: list,
+        base_test: Any,
+        counterfactual_tests: list,
+        sensitivity: float = 1.0,
+        field_level: int = 1,
+    ) -> dict:
+        """Stateless what-if sensitivity analysis with tipping-point guidance.
+
+        Args:
+            training: Reference normal samples (min 2).
+            base_test: Baseline sample under evaluation.
+            counterfactual_tests: What-if variants of the baseline.
+            sensitivity: Anomaly sensitivity multiplier.
+            field_level: 0=real, 1=complex field.
+        """
+        return self._post("/v1/intel/counterfactual-trade", {
+            "training": training,
+            "base_test": base_test,
+            "counterfactual_tests": counterfactual_tests,
+            "sensitivity": sensitivity,
+            "field_level": field_level,
+        })
+
+    def track_record(self) -> dict:
+        """Get CryptoGuard's historical prediction track record."""
+        return self._get("/v1/track-record")
+
+    # ── Physics Intelligence endpoints ────────────────────────────────
+
+    def trend_detect(self, sequence: list, sensitivity: float = 1.0) -> dict:
+        """Detect trend changes in a time series using physics simulation.
+
+        Args:
+            sequence: Ordered numeric values (time series).
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/trend-detect", {
+            "sequence": sequence, "sensitivity": sensitivity,
+        })
+
+    def regime_detect(self, sequence: list, sensitivity: float = 1.0) -> dict:
+        """Detect regime changes in a time series.
+
+        Args:
+            sequence: Ordered numeric values.
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/regime-detect", {
+            "sequence": sequence, "sensitivity": sensitivity,
+        })
+
+    def correlation_scan(
+        self, series_a: list, series_b: list, sensitivity: float = 1.0,
+    ) -> dict:
+        """Scan for anomalous correlation between two time series.
+
+        Args:
+            series_a: First time series.
+            series_b: Second time series.
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/correlation-scan", {
+            "series_a": series_a, "series_b": series_b,
+            "sensitivity": sensitivity,
+        })
+
+    def volatility_forecast(
+        self, sequence: list, horizon: int = 5, sensitivity: float = 1.0,
+    ) -> dict:
+        """Forecast volatility using physics-based simulation.
+
+        Args:
+            sequence: Historical price/return series.
+            horizon: Forecast horizon in periods.
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/volatility-forecast", {
+            "sequence": sequence, "horizon": horizon,
+            "sensitivity": sensitivity,
+        })
+
+    def spectral_scan(self, sequence: list, sensitivity: float = 1.0) -> dict:
+        """Spectral analysis of a time series for hidden periodicities.
+
+        Args:
+            sequence: Ordered numeric values.
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/spectral-scan", {
+            "sequence": sequence, "sensitivity": sensitivity,
+        })
+
+    def whale_detector(
+        self, volumes: list, prices: list | None = None, sensitivity: float = 1.0,
+    ) -> dict:
+        """Detect whale activity from volume and price data.
+
+        Args:
+            volumes: Volume time series.
+            prices: Optional price time series.
+            sensitivity: Detection sensitivity multiplier.
+        """
+        body: dict = {"volumes": volumes, "sensitivity": sensitivity}
+        if prices:
+            body["prices"] = prices
+        return self._post("/v1/whale-detector", body)
+
+    def momentum_pulse(self, sequence: list, sensitivity: float = 1.0) -> dict:
+        """Detect momentum pulses in a time series.
+
+        Args:
+            sequence: Ordered numeric values (prices or returns).
+            sensitivity: Detection sensitivity multiplier.
+        """
+        return self._post("/v1/momentum-pulse", {
+            "sequence": sequence, "sensitivity": sensitivity,
+        })
 
     # ── Free endpoints ────────────────────────────────────────────────
 
