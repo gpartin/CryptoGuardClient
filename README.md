@@ -67,7 +67,7 @@ curl -X POST https://gpartin--cryptoguard-api-fastapi-app.modal.run/v1/validate-
   -d '{"token": "solana", "action": "buy", "amount_usd": 500}'
 ```
 
-First 5 calls/day are free. After that: **$49/mo subscription** (Stripe), **$0.05/call** via [x402](https://github.com/coinbase/x402) USDC, or via [RapidAPI](https://rapidapi.com/).
+First 5 calls/day are free. After that: **$0.05/call** via [x402](https://github.com/coinbase/x402) USDC, or via [RapidAPI](https://rapidapi.com/).
 
 ## MCP Integration (Claude Desktop / AI Agents)
 
@@ -137,7 +137,7 @@ CryptoGuard is an MCP server with 5 tools. Works with Claude Desktop, Cursor, or
 | GET | `/v1/free-tier` | Free | Check remaining free calls |
 | GET | `/v1/search?q=...` | Free | Search tokens by name |
 | GET | `/v1/pricing` | Free | Pricing details |
-| POST | `/v1/subscribe` | Free | Start Stripe subscription checkout |
+
 | GET | `/health` | Free | Health check |
 
 ## How It Works
@@ -165,7 +165,7 @@ No model training, no drift, no retraining. Deterministic for the same input.
 
 - **Backtested**: 100% recall on 7 historical crashes with 27-day average lead time
 - **Free tier**: 5 calls/day per IP, no signup required
-- **3 payment options**: Stripe subscription ($49/mo), x402 USDC per-scan ($0.05), or RapidAPI
+- **2 payment options**: x402 USDC per-scan ($0.05) or RapidAPI plans
 - **Deterministic**: Same input always produces same verdict
 - **MCP server**: 5 tools for AI agent integration (stdio + HTTP)
 - **Python SDK**: `pip install CryptoGuardClient` with typed exceptions
@@ -178,9 +178,10 @@ No model training, no drift, no retraining. Deterministic for the same input.
 | Tier | Cost | Limit | Auth |
 |------|------|-------|------|
 | **Free** | $0 | 5 calls/day per IP | None |
-| **Subscription** | $49/month | Unlimited | API key (`X-API-Key` header) via [Stripe](https://stripe.com) |
 | **Per-scan** | $0.05/call | Unlimited | [x402](https://github.com/coinbase/x402) USDC micropayment |
-| **RapidAPI** | Marketplace pricing | Unlimited | [RapidAPI](https://rapidapi.com/) proxy key |
+| **RapidAPI Basic** | $0/mo | 500K requests | [RapidAPI](https://rapidapi.com/) proxy key |
+| **RapidAPI Pro** | $9.99/mo | 10K requests | [RapidAPI](https://rapidapi.com/) proxy key |
+| **RapidAPI Ultra** | $29.99/mo | 100K requests | [RapidAPI](https://rapidapi.com/) proxy key |
 
 ## Architecture
 
@@ -190,8 +191,7 @@ AI Agent / User
     v
 CryptoGuard API (Modal, stateless)
     |-- MCP endpoint (5 tools, JSON-RPC 2.0)
-    |-- Auth: API key (Stripe) → x402 (USDC) → RapidAPI → Free tier
-    |-- Stripe billing (POST /v1/subscribe → checkout → API key)
+    |-- Auth: RapidAPI → API key → x402 (USDC) → Free tier
     |-- Token resolution (name/ticker/address → CoinGecko ID, 7 chains)
     |-- Market data (CoinGecko + DexScreener, cached)
     +-- WaveGuard anomaly engine (GPU-accelerated)
