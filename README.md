@@ -59,6 +59,10 @@ print(rug["risk_score"])
 print(client.free_tier())
 ```
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/gpartin-cryptoguardclient).
+
 ## Primary Endpoint
 
 ```bash
